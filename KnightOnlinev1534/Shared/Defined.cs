@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LoginServer
+namespace Shared
 {
-    class Program
+    public class Define
     {
-        static void Main(string[] args)
-        {
-            for (; ; ) continue;
-        }
     }
 }

@@ -1,0 +1,6 @@
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\bin\Debug\Shared.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\bin\Debug\Shared.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\obj\Debug\Shared.csprojResolveAssemblyReference.cache
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\obj\Debug\Shared.csproj.CoreCompileInputs.cache
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\obj\Debug\Shared.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\obj\Debug\Shared.pdb

@@ -1,0 +1,6 @@
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\Database.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\Database.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Debug\Database.csprojResolveAssemblyReference.cache
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Debug\Database.csproj.CoreCompileInputs.cache
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Debug\Database.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Debug\Database.pdb

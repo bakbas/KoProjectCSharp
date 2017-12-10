@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace LoginServer
 {
-    class Program
+    public class LoginSession
     {
-        static void Main(string[] args)
-        {
-            for (; ; ) continue;
-        }
     }
 }

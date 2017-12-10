@@ -1,0 +1,6 @@
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\GameServer.exe.config
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\GameServer.exe
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\GameServer.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\obj\Debug\GameServer.exe
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\obj\Debug\GameServer.pdb
