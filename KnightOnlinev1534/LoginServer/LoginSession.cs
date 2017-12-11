@@ -8,5 +8,6 @@ namespace LoginServer
 {
     public class LoginSession
     {
+
     }
 }
