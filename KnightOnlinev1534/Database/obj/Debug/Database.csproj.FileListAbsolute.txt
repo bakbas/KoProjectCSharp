@@ -1,5 +1,14 @@
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\Database.dll.config
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\Database.dll
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\Database.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\EntityFramework.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\System.Collections.NonGeneric.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\System.ComponentModel.Annotations.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\System.ComponentModel.Primitives.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\System.ComponentModel.TypeConverter.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\EntityFramework.xml
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Debug\Database.csprojResolveAssemblyReference.cache
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Debug\Database.csproj.CoreCompileInputs.cache
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Debug\Database.dll
