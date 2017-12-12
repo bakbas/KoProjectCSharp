@@ -1,0 +1,5 @@
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\bin\Release\Shared.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\bin\Release\Shared.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\obj\Release\Shared.csproj.CoreCompileInputs.cache
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\obj\Release\Shared.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Shared\obj\Release\Shared.pdb

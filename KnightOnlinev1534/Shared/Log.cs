@@ -58,6 +58,9 @@
                     case "$wht":
                         myColor = ConsoleColor.White;
                         break;
+                    default:
+                        myColor = ConsoleColor.Gray;
+                        break;
                 }
                 Console.ForegroundColor = myColor;
                 Console.Write(s.Substring(4, s.Length - 4));

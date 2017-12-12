@@ -6,6 +6,7 @@ namespace LoginServer
 {
     class Program
     {
+        public static Network.KOSocket koSocket;
         public Semaphore socketEnforcer = new Semaphore(1500, 1500);
         static void Main(string[] args)
         {
@@ -20,13 +21,8 @@ namespace LoginServer
 
                 for (int i = 0; i < 10; i++)
                 {
-                    Log.SetColor(ConsoleColor.Gray);
-                    Log.WriteLine("KO Socket Starting Port : "+(15100+i));
-                    var socket = new Network.KOSocket((short)(15100+i), "LoginServer", lgn.PacketHandler);
-                    socket.StartAccept();
-                    Log.SetColor(ConsoleColor.Green);
-                    Log.WriteLine("\t\t[ OK ]");
-                    Log.SetColor(ConsoleColor.Gray);
+                    koSocket = new Network.KOSocket((short)(15100+i), "LoginServer", lgn.PacketHandler);
+                    koSocket.StartAccept();
                 }
             }
         }

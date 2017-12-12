@@ -14,7 +14,7 @@ namespace Network
         public int acrcount = 0;
         public byte[] Buffer; /* buffer for incoming data */
                               /* burdan sonra da artık bir yerde state objesşnş oluşturacan */
-        public string GUID; /* global unique id for client */
+        public string GUID = Guid.NewGuid().ToString(); /* global unique id for client */
         public MemoryStream Data = new MemoryStream(); //place where data is stored
         public EndPoint IP { get; set; }
         public int DataSize = 0; //data size to be received by the server
@@ -54,8 +54,9 @@ namespace Network
     }
     public class ByteBuffer
     {
+
         private List<byte> _storage = new List<byte>();
-        private bool m_doubleByte = false;
+        private bool m_doubleByte = true;
         private bool _noSize = false;
         private int _readPos = 0;
         public byte[] GetBytes() { return _storage.ToArray(); } // sanki en son olmuştu 254 + 5 olarak ? sıkıntı yok burda da nerden kaynaklanıyor anlamadım
@@ -71,8 +72,11 @@ namespace Network
         public void Append(byte val) { _storage.Add(val); }
         public void Append(sbyte val) { _storage.Add(Convert.ToByte(val)); }
         public void Append(UInt16 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
+        public void Append(Int16 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
         public void Append(UInt32 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
+        public void Append(Int32 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
         public void Append(UInt64 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
+        public void Append(Int64 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
         public void Append(byte[] val) { foreach (byte b in val) _storage.Add(b); }
         public void Append(ByteBuffer val) { foreach (byte b in val.GetBytes()) _storage.Add(b); }
         public void Append(string value)
@@ -130,6 +134,80 @@ namespace Network
         }
         public Packet() { }
         public byte OPCode { get { return _opcode; } }
-    }
 
+        #region Ekleme
+        #region Byte Ekleme
+        public static Packet operator +(Packet pkt, byte packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+
+        public static Packet operator +(Packet pkt, sbyte packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+
+        public static Packet operator +(Packet pkt, bool packet)
+        {
+            pkt.Append((packet ? (byte)0x01 : (byte)0x00));
+            return pkt;
+        }
+        #endregion
+        #region Short Ekleme
+        public static Packet operator +(Packet pkt, Int16 packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+        public static Packet operator +(Packet pkt, UInt16 packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+        #endregion
+        #region Int Ekleme
+        public static Packet operator +(Packet pkt, Int32 packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+        public static Packet operator +(Packet pkt, UInt32 packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+        #endregion
+        #region Int64 Ekleme
+        public static Packet operator +(Packet pkt, Int64 packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+        public static Packet operator +(Packet pkt, UInt64 packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+        #endregion
+        public static Packet operator +(Packet pkt, String packet)
+        {
+            pkt.Append(packet);
+            return pkt;
+        }
+        #endregion
+        #region Çikarma
+        public static implicit operator byte(Packet pkt) { return pkt.ReadByte(); }
+        public static implicit operator bool(Packet pkt) { return pkt.ReadByte() == 0x01 ? true : false; }
+        public static implicit operator short(Packet pkt) { return pkt.ReadShort(); }
+        public static implicit operator ushort(Packet pkt) { return pkt.ReadUShort(); }
+        public static implicit operator int(Packet pkt) { return pkt.ReadInt(); }
+        public static implicit operator UInt32(Packet pkt) { return pkt.ReadUInt(); }
+        public static implicit operator Int64(Packet pkt) { return pkt.ReadInt64(); }
+        public static implicit operator UInt64(Packet pkt) { return pkt.ReadUInt64(); }
+        public static implicit operator string(Packet pkt) { return pkt.ReadString(); }
+        public static implicit operator char(Packet pkt) { return pkt.ReadChar(); }
+        #endregion
+    }
 }

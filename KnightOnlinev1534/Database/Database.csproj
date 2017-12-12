@@ -30,8 +30,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.NonGeneric, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.NonGeneric.4.3.0\lib\net46\System.Collections.NonGeneric.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.4.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.ComponentModel.Primitives, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Primitives.4.3.0\lib\net45\System.ComponentModel.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.TypeConverter, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.TypeConverter.4.3.0\lib\net462\System.ComponentModel.TypeConverter.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,7 +61,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountManager\BLACKLIST.cs" />
+    <Compile Include="AccountManager\CURRENTUSER.cs" />
+    <Compile Include="AccountManager\EVENT_REWARDS.cs" />
+    <Compile Include="AccountManager\EVENT_SCHEDULER.cs" />
+    <Compile Include="AccountManager\GAME_MASTER_ROLES.cs" />
+    <Compile Include="AccountManager\GAME_SETTINGS.cs" />
+    <Compile Include="AccountManager\ITEM.cs" />
+    <Compile Include="AccountManager\KNIGHTS_SETTINGS.cs" />
+    <Compile Include="AccountManager\KNIGHT_CASH.cs" />
+    <Compile Include="AccountManager\KOAccount.cs" />
+    <Compile Include="AccountManager\MAGIC.cs" />
+    <Compile Include="AccountManager\mall_list.cs" />
+    <Compile Include="AccountManager\mall_main_category.cs" />
+    <Compile Include="AccountManager\PANEL_SESSIONS.cs" />
+    <Compile Include="AccountManager\PREMIUM_SERVICE_USER.cs" />
+    <Compile Include="AccountManager\PUS_BANNER.cs" />
+    <Compile Include="AccountManager\PUS_BASKET.cs" />
+    <Compile Include="AccountManager\PUS_CASH_POINT_PRODUCTS.cs" />
+    <Compile Include="AccountManager\PUS_ESN_CODES.cs" />
+    <Compile Include="AccountManager\PUS_SESSIONS.cs" />
+    <Compile Include="AccountManager\SEND_MESSAGES.cs" />
+    <Compile Include="AccountManager\SERVERS.cs" />
+    <Compile Include="AccountManager\SERVER_LIST.cs" />
+    <Compile Include="AccountManager\SERVER_NEWS.cs" />
+    <Compile Include="AccountManager\sysdiagrams.cs" />
+    <Compile Include="AccountManager\TB_USER.cs" />
+    <Compile Include="AccountManager\TICKET_LIST.cs" />
+    <Compile Include="AccountManager\TICKET_MESSAGES.cs" />
+    <Compile Include="AccountManager\UPGRADES.cs" />
+    <Compile Include="AccountManager\VERSION.cs" />
+    <Compile Include="AccountManager\WAITING_COMMANDS.cs" />
+    <Compile Include="AccountManager\WEBSITE_NEWS.cs" />
+    <Compile Include="AccountManager\WEBSITE_SLIDER.cs" />
+    <Compile Include="AccountManager\WHITELIST.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LogManager\" />
+    <Folder Include="ServerManager\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
