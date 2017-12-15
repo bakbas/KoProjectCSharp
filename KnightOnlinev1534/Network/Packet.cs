@@ -50,6 +50,11 @@ namespace Network
             GC.Collect();
         }
 
+        public static implicit operator string(AsyncClient v)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
     public class ByteBuffer
@@ -68,18 +73,20 @@ namespace Network
                 temp.Add(_storage[i]);
             return temp.ToArray();
         }
+        
+
         public UInt16 Size() { return (UInt16)_storage.Count; }
-        public void Append(byte val) { _storage.Add(val); }
-        public void Append(sbyte val) { _storage.Add(Convert.ToByte(val)); }
-        public void Append(UInt16 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
-        public void Append(Int16 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
-        public void Append(UInt32 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
-        public void Append(Int32 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
-        public void Append(UInt64 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
-        public void Append(Int64 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); }
-        public void Append(byte[] val) { foreach (byte b in val) _storage.Add(b); }
-        public void Append(ByteBuffer val) { foreach (byte b in val.GetBytes()) _storage.Add(b); }
-        public void Append(string value)
+        public ByteBuffer Append(byte val) { _storage.Add(val); return this; }
+        public ByteBuffer Append(sbyte val) { _storage.Add(Convert.ToByte(val)); return this; }
+        public ByteBuffer Append(UInt16 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b);return this; }
+        public ByteBuffer Append(Int16 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); return this;}
+        public ByteBuffer Append(UInt32 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); return this; }
+        public ByteBuffer Append(Int32 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); return this; }
+        public ByteBuffer Append(UInt64 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); return this; }
+        public ByteBuffer Append(Int64 val) { byte[] temp = BitConverter.GetBytes(val); foreach (byte b in temp) _storage.Add(b); return this; }
+        public ByteBuffer Append(byte[] val) { foreach (byte b in val) _storage.Add(b); return this; }
+        public ByteBuffer Append(ByteBuffer val) { foreach (byte b in val.GetBytes()) _storage.Add(b); return this; }
+        public ByteBuffer Append(string value)
         {
 
             var len = (UInt16)value.Length;
@@ -93,6 +100,7 @@ namespace Network
             byte[] val = Encoding.Default.GetBytes(value);
             foreach (byte b in val)
                 _storage.Add(b);
+            return this;
         }
         public byte ReadByte() { byte val = _storage[_readPos]; _readPos += sizeof(byte); return val; }
         public char ReadChar() { char val = BitConverter.ToChar(_storage.ToArray(), _readPos); _readPos += sizeof(char); return val; }
@@ -112,7 +120,7 @@ namespace Network
                 for (UInt16 i = 0; i < len; i++)
                     temp[i] = ReadByte();
             }
-            return Encoding.Default.GetString(temp);
+            return Encoding.Default.GetString(temp).TrimEnd() ;
         }
         public void Clear() { _storage.Clear(); _readPos = 0; }
         public void SByte() { m_doubleByte = false; }
@@ -123,16 +131,32 @@ namespace Network
     public class Packet : ByteBuffer
     {
         private byte _opcode;
+        public Packet()
+        {
+
+        }
         public Packet(byte Opcode)
         {
             _opcode = Opcode;
         }
+
+        public Packet(object Opcode)
+        {
+            _opcode = (byte)Opcode;
+        }
+
         public Packet(byte Opcode, byte SubOpCode)
         {
             _opcode = Opcode;
             Append(SubOpCode);
         }
-        public Packet() { }
+
+        public Packet(object Opcode, byte SubOpCode)
+        {
+            _opcode = (byte)Opcode;
+            Append(SubOpCode);
+        }
+
         public byte OPCode { get { return _opcode; } }
 
         #region Ekleme
@@ -191,9 +215,24 @@ namespace Network
             return pkt;
         }
         #endregion
+        #region String ekleme
         public static Packet operator +(Packet pkt, String packet)
         {
             pkt.Append(packet);
+            return pkt;
+        }
+        #endregion
+
+        public static explicit operator Packet(byte b)
+        {
+            Packet pkt = new Packet(b);
+            return pkt;
+        }
+        
+        public static Packet operator +(Packet pkt, Packet insert)
+        {
+            foreach (var byt in insert.ToArray())
+                pkt += byt;
             return pkt;
         }
         #endregion
@@ -208,6 +247,20 @@ namespace Network
         public static implicit operator UInt64(Packet pkt) { return pkt.ReadUInt64(); }
         public static implicit operator string(Packet pkt) { return pkt.ReadString(); }
         public static implicit operator char(Packet pkt) { return pkt.ReadChar(); }
+        public static implicit operator byte[](Packet pkt)
+        {
+            Packet BuildResult = new Packet();
+            BuildResult += (UInt16)0x55AA;
+            BuildResult += (UInt16)(pkt.Size() + 1);
+            BuildResult += pkt.OPCode;
+
+            foreach (byte b in pkt.ToArray())
+                BuildResult += b;
+
+            BuildResult += (UInt16)0xAA55;
+
+            return BuildResult.ToArray();
+        }
         #endregion
     }
 }

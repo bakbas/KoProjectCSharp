@@ -9,3 +9,10 @@ C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\obj
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\obj\Debug\GameServer.exe
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\obj\Debug\GameServer.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Database.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\EntityFramework.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Database.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Database.dll.config
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\EntityFramework.xml
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\EntityFramework.SqlServer.xml

@@ -233,6 +233,7 @@ namespace Network
                     newClient.ReadEventArgs.Completed += InOutCompleted;
                     newClient.ReadEventArgs.UserToken = newClient;
                     newClient.ReadEventArgs.SetBuffer(newClient.Buffer, 0, newClient.Buffer.Length);
+
                     SocketBase.InsertUser(newClient);
                     /* burada yeni clienti oluşturduktan sonra insertuser'i çağırıyorum */
                     #endregion
@@ -250,8 +251,9 @@ namespace Network
             {
                 /* just skip */
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 // _me.Core.InvokeException(ex);
             }
         }

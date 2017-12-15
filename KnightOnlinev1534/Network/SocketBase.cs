@@ -16,19 +16,32 @@ namespace Network
         readonly static object ChainLock = new Object();
         public static Dictionary<string, AsyncClient> ConCurrentList = new Dictionary<string, AsyncClient>();
         private static int ClientCount = 0;
+
+        static SocketBase()
+        {
+            lock (sockidlist)
+            {
+                sockidlist.Clear();
+                for (int i = 0; i < 3000; i++)
+                    sockidlist.Add((short)i, false);
+            }
+        }
         public static short GetIndex()
         {
             short rkey = -1;
             foreach (var kvp in sockidlist)
                 if (kvp.Value == false)
+                {
                     rkey = kvp.Key;
+                    break;
+                }
 
             if (rkey != -1)
             {
                 if (sockidlist.ContainsKey(rkey))
                 {
                     sockidlist[rkey] = true;
-                    return (short)(1500 - rkey);
+                    return (short)(rkey);
                 }
             }
             return -1;
@@ -38,7 +51,7 @@ namespace Network
         {
             lock (ChainLock)
             {
-                ci.GUID = GetHash(ci.IP);
+                ci.GUID = Guid.NewGuid().ToString();
                 ConCurrentList.Add(ci.GUID, ci);
                 //Log.WriteLine(string.Format("A new user has been connected. IP = {0} ", ci.IP));
                 Interlocked.Increment(ref ClientCount);
