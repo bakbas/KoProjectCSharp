@@ -11,6 +11,11 @@ namespace GameServer
         INOUT_SUMMON = 5
     };
 
+    public interface IUserItemHandler
+    {
+
+    }
+
     public interface IUserMovement
     {
         void SetRegion(short x = -1, short z = -1);

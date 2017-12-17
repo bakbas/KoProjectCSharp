@@ -36,7 +36,7 @@ namespace GameServer
         {
             Packet result = new Packet();
             GetInOut(ref result, InOutType.INOUT_IN);
-            GameServerDLG.Send_NewRegions(result, insert_x, insert_z, GetMap(), GetRegionX(), GetRegionZ());
+            g_pMain.Send_NewRegions(result, insert_x, insert_z, GetMap(), GetRegionX(), GetRegionZ());
         }
 
         public void MoveProcess(Packet pkt)
@@ -64,9 +64,9 @@ namespace GameServer
             SetPosition(real_x, real_y, real_z);
             if (RegisterRegion())
             {
-                GameServerDLG.RegionNpcInfoForMe(this);
-                GameServerDLG.RegionUserInOutForMe(this);
-                GameServerDLG.MerchantUserInOutForMe(this);
+                g_pMain.RegionNpcInfoForMe(this);
+                g_pMain.RegionUserInOutForMe(this);
+                g_pMain.MerchantUserInOutForMe(this);
             }
 
             Packet result = new Packet(WIZ.MOVE);
@@ -107,7 +107,7 @@ namespace GameServer
         {
             Packet result = new Packet();
             GetInOut(ref result, InOutType.INOUT_OUT);
-            GameServerDLG.Send_OldRegions(result, del_x, del_z, GetMap(), GetRegionX(), GetRegionZ());
+            g_pMain.Send_OldRegions(result, del_x, del_z, GetMap(), GetRegionX(), GetRegionZ());
         }
 
         ushort IUserMovement.GetRegionX() => m_sRegionX;

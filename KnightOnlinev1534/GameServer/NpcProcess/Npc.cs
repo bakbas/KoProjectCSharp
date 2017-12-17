@@ -10,14 +10,33 @@
     NpcSpecialTypeElmoradKeeper = 99
 };
 
+public enum NpcState
+{
+    NPC_DEAD = 0,
+    NPC_LIVE,
+    NPC_ATTACKING,
+    NPC_ATTACKED,
+    NPC_SLEEPING,
+    NPC_TRACING,
+    NPC_MOVING,
+    NPC_STANDING,
+    NPC_FIGHTING,
+    NPC_STRATEGY,
+    NPC_BACK,
+    NPC_ESCAPE,
+    NPC_FAINTING,
+    NPC_HEALING,
+    NPC_CASTING
+};
+
 namespace GameServer
 {
     using System;
-    using static Headers.GameDefine;
+    using Network;
     /// <summary>
     /// Npc sınıfı
     /// </summary>
-    public class Npc
+    public partial class Npc
     {
         
         public short GetID() => m_sNid;
@@ -33,6 +52,11 @@ namespace GameServer
         public string m_strName;      // MONSTER(NPC) Name
         public int m_iMaxHP;           // ÃÖ´ë HP
         public int m_iHP;              // ÇöÀç HP
+        private int m_sPathCount;
+        private int m_iPattenFrame;
+        private bool m_bStopFollowingTarget;
+        private byte m_byActionFlag;
+        private int m_byMaxDamagedNation;
         public byte m_byState;            // ¸ó½ºÅÍ (NPC) »óÅÂ
         public byte m_tNpcType;           // NPC Type
                                           // 0 : Normal Monster
@@ -41,10 +65,17 @@ namespace GameServer
                                           // 3 : °æºñº´
         public int m_iSellingGroup;        // ItemGroup
 
-        public byte m_NpcState;           // NPCÀÇ »óÅÂ - »ì¾Ò´Ù, Á×¾ú´Ù, ¼­ÀÖ´Ù µîµî...
+        private NpcState _npcState;
+        private int m_iAniFrameCount;
+
+        public byte m_NpcState { get { return (byte)_npcState; } set { _npcState = (NpcState)value; } }           // NPCÀÇ »óÅÂ - »ì¾Ò´Ù, Á×¾ú´Ù, ¼­ÀÖ´Ù µîµî...
         public bool m_byGateOpen;      // Gate status: true is open, false is closed.
 
         public byte m_byObjectType;     // º¸ÅëÀº 0, objectÅ¸ÀÔ(¼º¹®, ·¹¹ö)Àº 1
+
+        public short GetProtoID() => m_sSid;
+        public byte GetType() => m_tNpcType;
+
         public byte m_byDirection;
 
         public byte m_byTrapNumber;
@@ -128,7 +159,52 @@ namespace GameServer
         public float m_cury;
         public Region m_CurrentRegion;
         public ushort m_sRegionX;
+        private float m_fAdd_x;
         public ushort m_sRegionZ;
         public string GUID;
+        internal int m_sACAmount;
+        internal double iDelay;
+
+        public Npc()
+        {
+            m_pPattenPos.x = m_pPattenPos.z = 0;
+        }
+
+        private void SendToRegion(Packet result)
+        {
+            g_pMain.SendToRegion(result, GetRegion());
+        }
+
+        public bool isDead() => m_iHP == 0 ? true : false;
+
+        public void HpChange(int amount, User pAttacker)
+        {
+            bool bySendPacket = false;
+
+            // Implement damage/HP cap.
+            if (amount < -32000)
+                amount = -32000;
+            else if (amount > 32000)
+                amount = 32000;
+
+            if (amount < 0 && -amount > m_iHP)
+                m_iHP = 0;
+
+            else if (amount >= 0 && m_iHP + amount > m_iMaxHP)
+                m_iHP = m_iMaxHP;
+
+            else
+                m_iHP += amount;
+
+            // NOTE: Sleep System
+            //if (m_NpcState == NPC_SLEEPING)
+            //{
+            //    m_NpcState = NPC_TRACING;
+            //    bySendPacket = true;
+            //}
+
+            if (pAttacker != null)
+                pAttacker.SendTargetHP(0, GetID(), amount);
+        }
     }
 }

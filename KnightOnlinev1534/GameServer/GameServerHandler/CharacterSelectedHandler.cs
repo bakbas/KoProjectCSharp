@@ -34,7 +34,7 @@ namespace GameServer
             short sClass = pkt;
             byte bFace = pkt, nHair = pkt, str = pkt, sta = pkt, dex = pkt, intel = pkt, cha = pkt, errorCode = 0;
 
-            var p_TableCoefficient = GameServerDLG._CLASS_COEFFICIENT.Where(i => i.sClass == sClass).FirstOrDefault();
+            var p_TableCoefficient = g_pMain._CLASS_COEFFICIENT.Where(i => i.sClass == sClass).FirstOrDefault();
 
             if (bCharIndex > 2)
                 errorCode = globals.NEWCHAR_NO_MORE;
@@ -70,11 +70,11 @@ namespace GameServer
                 string.IsNullOrEmpty(strPassword) || strPassword.Length > 40)
                 goto fail_return;
 
-            var User = GameServerDLG.m_UserList.Where(i => i.Value.strAccountID == strAccountID).FirstOrDefault();
+            var User = g_pMain.m_UserList.Where(i => i.Value.strAccountID == strAccountID).FirstOrDefault();
 
             if(User.Value != null && User.Value.GUID.GUID != GUID.GUID)
             {
-                GameServerDLG.Disconnect(User);
+                g_pMain.Disconnect(User);
                 goto fail_return;
             }
 

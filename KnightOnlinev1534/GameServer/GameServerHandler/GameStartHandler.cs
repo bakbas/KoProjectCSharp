@@ -22,9 +22,9 @@ namespace GameServer
             {
                 SendMyInfo();
 
-                GameServerDLG.UserInOutForMe(this);
-                GameServerDLG.MerchantUserInOutForMe(this);
-                GameServerDLG.NpcInOutForMe(this);
+                g_pMain.UserInOutForMe(this);
+                g_pMain.MerchantUserInOutForMe(this);
+                g_pMain.NpcInOutForMe(this);
                 // inout işlemi
 
                 SendNotice();
@@ -35,8 +35,8 @@ namespace GameServer
                 Packet result = new Packet(WIZ.GAMESTART);
                 Send(result);
 
-
-                BlinkStart();
+                SendZoneAbility();
+                //BlinkStart();
                 SetUserAbility();
 
                 m_LastX = GetX();
@@ -47,6 +47,20 @@ namespace GameServer
             {
 
             }
+        }
+
+        private void SendZoneAbility()
+        {
+
+            Packet result = new Packet(WIZ.ZONEABILITY);
+            var pMap = GetMap();
+            result = result + (byte)(1);
+            result += pMap.canTradeWithOtherNation();
+            result += (byte)pMap.GetZoneType();
+            result += pMap.canTalkToOtherNation();
+            result += (short)(pMap.m_byTariff);
+
+            Send(result);
         }
 
         private void ExtendDatabaseInfo()

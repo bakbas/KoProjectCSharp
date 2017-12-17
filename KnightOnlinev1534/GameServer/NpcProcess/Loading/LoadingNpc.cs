@@ -9,11 +9,9 @@ using Shared;
 namespace GameServer.NpcProcess
 {
     using static Headers.GameDefine;
-    public class LoadingNpc : Npc, ILoadingNpc
+    public class LoadingNpc : ILoadingNpc
     {
-        const short NPC_BAND = 10000;
-
-        private short GET_NEW_NPC_INDEX => (short)(NPC_BAND + GameServerDLG.TotalNpc++);
+        private short GET_NEW_NPC_INDEX => (short)(NPC_BAND + g_pMain.TotalNpc++);
 
         public void ThreadStarter()
         {
@@ -26,106 +24,104 @@ namespace GameServer.NpcProcess
             Log.WriteLine("=======================================");
             Log.WriteLine("Npc ve yaratıklar oluşturuluyor");
 #endif
-            GameServerDLG.m_NpcList.Clear();
+            g_pMain.m_NpcList.Clear();
              int nRandom = 0;
-             double dbSpeed = 0;
              char[] szPath = new char[500];
              float fRandom_X = 0.0f, fRandom_Z = 0.0f;
              byte rand = (byte)myrand(1, 4);
-            // Unfortunately we cannot simply read what we need directly
-            // into the CNpc instance. We have to resort to creating
-            // copies of the data to allow for the way they handle multiple spawns...
-            // Best we can do, I think, is to avoid allocating it on the stack.
-             byte bNumNpc, bZoneID, bActType, bRegenType, bDungeonFamily, bSpecialType,
-                bTrapNumber, bDirection, bDotCnt;
-             short sSid, sRegTime;
-             int nServerNum;
-             int LeftX , iTopZ, iRightX, iBottomZ,
-                iLimitMinX, iLimitMinZ, iLimitMaxX, iLimitMaxZ;
             foreach (var npc in m_PosList)
             {
-                byte bPathSerial = 1;
-                Npc pNpc = npc.Family == 2 ? 
-                        GenerateNpc(m_NpcList.Where(i => i.sSid == npc.NpcID).FirstOrDefault()) :
-                        GenerateMonster(m_MonsterList.Where(i => i.sSid == npc.NpcID).FirstOrDefault());
-
-                pNpc.m_byMoveType = npc.ActType;// bActType;
-                pNpc.m_byInitMoveType = npc.ActType;
-
-                pNpc.m_byBattlePos = 0;
-                if (pNpc.m_byMoveType >= 2)
+                for (int iii = 0; iii < npc.NumNPC; iii++)
                 {
-                    pNpc.m_byBattlePos = myrand(1, 3);
-                    pNpc.m_byPathCount = bPathSerial++;
-                }
+                    byte bPathSerial = 1;
+                    Npc pNpc = npc.Family == 2 ?
+                            GenerateNpc(m_NpcList.Where(i => i.sSid == npc.NpcID).FirstOrDefault()) :
+                            GenerateMonster(m_MonsterList.Where(i => i.sSid == npc.NpcID).FirstOrDefault());
 
-                pNpc.m_bZone = npc.ZoneID;
-                nRandom = Math.Abs(npc.LeftX - npc.RightX);
-                if (nRandom <= 1)
-                    fRandom_X = (float)npc.LeftX;
-                else
-                {
-                    if (npc.LeftX < npc.RightX)
-                        fRandom_X = (float)myrand(npc.LeftX, npc.RightX);
+                    if (pNpc == null) continue;
+                    pNpc.m_byMoveType = npc.ActType;// bActType;
+                    pNpc.m_byInitMoveType = npc.ActType;
+
+                    pNpc.m_byBattlePos = 0;
+                    if (pNpc.m_byMoveType >= 2)
+                    {
+                        pNpc.m_byBattlePos = myrand(1, 3);
+                        pNpc.m_byPathCount = bPathSerial++;
+                    }
+
+                    pNpc.m_bZone = npc.ZoneID;
+                    nRandom = Math.Abs(npc.LeftX - npc.RightX);
+                    if (nRandom <= 1)
+                        fRandom_X = (float)npc.LeftX;
                     else
-                        fRandom_X = (float)myrand(npc.RightX, npc.LeftX);
-                }
+                    {
+                        if (npc.LeftX < npc.RightX)
+                            fRandom_X = (float)myrand(npc.LeftX, npc.RightX);
+                        else
+                            fRandom_X = (float)myrand(npc.RightX, npc.LeftX);
+                    }
 
-                nRandom = Math.Abs(npc.TopZ - npc.BottomZ);
+                    nRandom = Math.Abs(npc.TopZ - npc.BottomZ);
 
-                if (nRandom <= 1)
-                    fRandom_Z = (float)npc.TopZ;
-                else
-                {
-                    if (npc.TopZ < npc.BottomZ)
-                        fRandom_Z = (float)myrand(npc.TopZ, npc.BottomZ);
+                    if (nRandom <= 1)
+                        fRandom_Z = (float)npc.TopZ;
                     else
-                        fRandom_Z = (float)myrand(npc.BottomZ, npc.TopZ);
+                    {
+                        if (npc.TopZ < npc.BottomZ)
+                            fRandom_Z = (float)myrand(npc.TopZ, npc.BottomZ);
+                        else
+                            fRandom_Z = (float)myrand(npc.BottomZ, npc.TopZ);
+                    }
+
+                    pNpc.SetPosition(fRandom_X, 0.0f, fRandom_Z);
+                    pNpc.m_sRegenTime = npc.RegTime * 1000;
+                    pNpc.m_byDirection = npc.byDirection;
+                    pNpc.m_sMaxPathCount = npc.path == null ? 0 : npc.path.Length / 8;
+                    pNpc.strPath = npc.path == null ? string.Empty : npc.path;
+
+                    if ((pNpc.m_byMoveType == 2 || pNpc.m_byMoveType == 3) && pNpc.m_sMaxPathCount == 0)
+                        pNpc.m_byMoveType = 1;
+
+                    pNpc.m_nInitMinX = pNpc.m_nLimitMinX = npc.LeftX;
+                    pNpc.m_nInitMinY = pNpc.m_nLimitMinZ = npc.TopZ;
+                    pNpc.m_nInitMaxX = pNpc.m_nLimitMaxX = npc.RightX;
+                    pNpc.m_nInitMaxY = pNpc.m_nLimitMaxZ = npc.BottomZ;
+
+                    //  pNpc.m_byDungeonFamily  = npc.bDungeonFamily;
+                    pNpc.m_bySpecialType = (NpcSpecialType)npc.SpecialType;
+                    //   pNpc.m_byRegenType      = bRegenType;
+                    pNpc.m_byTrapNumber = npc.TrapNumber;
+
+                    pNpc.m_oSocketID = -1;
+                    pNpc.m_bEventRoom = 0;
+                    pNpc.GUID = Guid.NewGuid().ToString();
+                    pNpc.m_pMap = g_pMain.Maps.Where(i => i.m_nZoneNumber == pNpc.m_bZone).FirstOrDefault();// GetZoneByID(pNpc->GetZoneID());
+
+                    if (pNpc.m_pMap == null)
+                    {
+                        Log.WriteExt($"#color$redERROR: NPC {pNpc.m_sSid} in zone {pNpc.m_bZone} that does not exist.");
+                        pNpc = null;
+                        continue;
+                    }
+
+                    pNpc.m_sNid = GET_NEW_NPC_INDEX;
+                    pNpc.SetRegion((short)pNpc.GetNewRegionX(), (short)pNpc.GetNewRegionZ());
+                    pNpc.AddToRegion((short)pNpc.GetNewRegionX(), (short)pNpc.GetNewRegionZ());
+                    g_pMain.m_NpcList.Add(pNpc.m_sNid, pNpc);
                 }
-
-                pNpc.SetPosition(fRandom_X, 0.0f, fRandom_Z);
-
-                pNpc.m_sRegenTime = npc.RegTime * 1000;
-                pNpc.m_byDirection = npc.byDirection;
-                pNpc.m_sMaxPathCount = npc.path.Length / 8;
-                pNpc.strPath = npc.path;
-
-                if ((pNpc.m_byMoveType == 2 || pNpc.m_byMoveType == 3) && pNpc.m_sMaxPathCount == 0)
-                    pNpc.m_byMoveType = 1;
-
-                pNpc.m_nInitMinX = pNpc.m_nLimitMinX = npc.LeftX;
-                pNpc.m_nInitMinY = pNpc.m_nLimitMinZ = npc.TopZ;
-                pNpc.m_nInitMaxX = pNpc.m_nLimitMaxX = npc.RightX;
-                pNpc.m_nInitMaxY = pNpc.m_nLimitMaxZ = npc.BottomZ;
-
-              //  pNpc.m_byDungeonFamily  = npc.bDungeonFamily;
-                pNpc.m_bySpecialType    = (NpcSpecialType)npc.SpecialType;
-             //   pNpc.m_byRegenType      = bRegenType;
-                pNpc.m_byTrapNumber     = npc.TrapNumber;
-
-                pNpc.m_oSocketID = -1;
-                pNpc.m_bEventRoom = 0;
-                pNpc.GUID = Guid.NewGuid().ToString();
-                pNpc.m_pMap = GameServerDLG.Maps.Where(i => i.m_nZoneNumber == pNpc.m_bZone).FirstOrDefault();// GetZoneByID(pNpc->GetZoneID());
-
-                if (pNpc.m_pMap == null)
-                {
-                    Log.WriteExt($"#color$redERROR: NPC {pNpc.m_sSid} in zone {pNpc.m_bZone} that does not exist.");
-                    pNpc = null ;
-                    continue;
-                }
-
-                GameServerDLG.m_NpcList.Add(GET_NEW_NPC_INDEX, pNpc);
             }
 
 #if DEBUG
-            Log.WriteLine(GameServerDLG.m_NpcList.Count+" Adet Npc oluşturuldu.");
+            Log.WriteLine(g_pMain.m_NpcList.Count+" Adet Npc oluşturuldu.");
             Log.WriteLine("=======================================");
 #endif
+            ThreadStarter();
         }
 
         public Npc GenerateNpc(K_NPC npc)
         {
+            if (npc == null)
+                return null;
             Npc pNew = new Npc()
             {
                 m_bMonster = false,
@@ -170,13 +166,16 @@ namespace GameServer.NpcProcess
                 m_byDirecAttack = npc.byDirectAttack,
                 m_byMagicAttack = npc.byMagicAttack,
                 m_sSid = npc.sSid,
-                m_sPid = npc.sPid
+                m_sPid = npc.sPid,
+                m_tNpcType = npc.byType
             };
             return pNew;
         }
 
         public Npc GenerateMonster(K_MONSTER npc)
         {
+            if (npc == null)
+                return null;
             Npc pNew = new Npc()
             {
                 m_bMonster = true,
@@ -221,7 +220,8 @@ namespace GameServer.NpcProcess
                 m_byDirecAttack = npc.byDirectAttack,
                 m_byMagicAttack = npc.byMagicAttack,
                 m_sSid = npc.sSid,
-                m_sPid = npc.sPid
+                m_sPid = npc.sPid,
+                m_tNpcType = npc.byType
             };
             return pNew;
         }

@@ -99,6 +99,7 @@ namespace GameServer
         private bool hasCharacterSelected { get; set; }
         public string strAccountID, strUserID;
         public USERDATA m_DatabaseInfo;
+        private int m_bPlayerAttackAmount;
         internal short m_sSid;
         public UserState State = new UserState();
         public UserAbility Ability = new UserAbility();

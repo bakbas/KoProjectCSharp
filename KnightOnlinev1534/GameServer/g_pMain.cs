@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace GameServer
 {
-    public static partial class GameServerDLG
+    public static partial class g_pMain
     {
         public const int VIEW_DISTANCE = 48;
         public static int TotalNpc = 0;
@@ -25,7 +25,8 @@ namespace GameServer
         public static List<NpcPosTable> KNPCPOS = new List<NpcPosTable>();
         public static List<PARTYGROUP> PartyList = new List<PARTYGROUP>();
         public static Dictionary<short, Npc> m_NpcList = new Dictionary<short, Npc>();
-
+        public static List<QUEST_HELPER> m_HelperList = new List<QUEST_HELPER>();
+        public static List<QUEST_MONSTER> m_QuestMonsterList = new List<QUEST_MONSTER>();
         public static List<COEFFICIENT> _CLASS_COEFFICIENT = new List<COEFFICIENT>();
         public static List<MAGIC_TYPE1> m_MagicType1;
         public static List<MAGIC_TYPE2> m_MagicType2;
@@ -76,6 +77,27 @@ namespace GameServer
             }
             Log.WriteExt("#color$gre\t\t[ OK ]");
 
+            Log.WriteLine("Loading NPC");
+            if (!DbAgent.LoadNpcs(false))
+            {
+                Log.WriteExt("#color$red\t\t[ FAIL ]");
+                return false;
+            }
+            Log.WriteExt("#color$gre\t\t[ OK ]");
+            Log.WriteLine("Loading QUEST_HELPER");
+            if (!DbAgent.LoadHelperTable(ref m_HelperList, false))
+            {
+                Log.WriteExt("#color$red\t\t[ FAIL ]");
+                return false;
+            }
+            Log.WriteExt("#color$gre\t\t[ OK ]");
+            Log.WriteLine("Loading QUEST_MONSTER");
+            if (!DbAgent.LoadQuestMonsterTable(ref m_QuestMonsterList, false))
+            {
+                Log.WriteExt("#color$red\t\t[ FAIL ]");
+                return false;
+            }
+            Log.WriteExt("#color$gre\t\t[ OK ]");
 
             new Thread(new ThreadStart(UserTimer)).Start();
             return true;
@@ -92,7 +114,25 @@ namespace GameServer
                 Thread.Sleep(1000);
             }
         }
+        public static void SendToRegion(Packet result, Region region)
+        {
+            if (region == null) return;
+            lock (region.m_RegionUserArray)
+            {
+                Log.WriteLine("=================================================");
+                foreach (var itr in region.m_RegionUserArray.Values)
+                {
+                    User pUSer = g_pMain.m_UserList[itr];
 
+                    if (pUSer == null)
+                        continue;
+
+                    Log.WriteLine("Regin Sending : " + itr + " - " + pUSer.strUserID);
+                    pUSer.Send(result);
+                }
+                Log.WriteLine("=================================================");
+            }
+        }
         public static void PacketHandler(Packet pkt, AsyncClient client)
         {
             if (m_UserList.ContainsKey(client.Index))
@@ -271,5 +311,9 @@ namespace GameServer
             m_UserList.Remove(user.Key);
         }
 
+        public static Npc GetNpcPtr(short sid) 
+            => m_NpcList.Where(i => i.Value.m_sNid == sid).Select(i => i.Value).FirstOrDefault();
+        public static User GetUserPtr(short sid)
+           => m_UserList.Where(i => i.Value.m_sSid == sid).Select(i => i.Value).FirstOrDefault();
     }
 }

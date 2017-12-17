@@ -12,14 +12,55 @@ namespace GameServer
         #region InOut
         public void GetInOut(ref Packet result, InOutType bType)
         {
+            result = new Packet(WIZ.NPC_INOUT);
+            result = result + (byte)bType + GetID();
+            if (bType != InOutType.INOUT_OUT)
+                GetNpcInfo(ref result);
+
+            if (bType == InOutType.INOUT_IN)
+                OnRespawn();
         }
 
-        public void GetNpcInfo(ref Packet result)
+        private void OnRespawn()
         {
         }
 
-        public void NpcInOut(ref Packet result, InOutType bType)
+        public void GetNpcInfo(ref Packet pkt)
         {
+            pkt.SByte();
+            pkt = pkt + m_sSid +
+                m_sPid + m_tNpcType + m_iSellingGroup + m_sSize +
+                m_iWeapon_1 + m_iWeapon_2 +
+                (m_bMonster ? (byte)0 : m_bNation) +
+                m_bLevel +
+                GetSPosX() + GetSPosZ() + GetSPosY() +
+                (int)(m_byGateOpen ? 1 : 0) +
+                m_byObjectType +
+                (int)0 +
+                (byte)m_byDirection;
+        }
+        
+        public void NpcInOut(InOutType bType, float fX, float fZ, float fY)
+        {
+            if(GetRegion() == null)
+                SetRegion((short)GetNewRegionX(), (short)GetNewRegionZ());
+
+            if (GetRegion() == null)
+                return;
+
+            if (bType == InOutType.INOUT_OUT)
+            {
+                GetRegion().Remove(this);
+            }
+            else
+            {
+                GetRegion().Add(this);
+                SetPosition(fX, fY, fZ);
+            }
+
+            Packet result = new Packet() ;
+            GetInOut(ref result, bType);
+            SendToRegion(result);
         }
 
         public void NpcMovement()
@@ -89,13 +130,13 @@ namespace GameServer
         {
             Packet result = new Packet();
             GetInOut(ref result, InOutType.INOUT_OUT);
-            GameServerDLG.Send_OldRegions(result, del_x, del_z, GetMap(), GetRegionX(), GetRegionZ());
+            g_pMain.Send_OldRegions(result, del_x, del_z, GetMap(), GetRegionX(), GetRegionZ());
         }
         public void InsertRegion(short insert_x, short insert_z)
         {
             Packet result = new Packet();
             GetInOut(ref result, InOutType.INOUT_IN);
-            GameServerDLG.Send_NewRegions(result, insert_x, insert_z, GetMap(), GetRegionX(), GetRegionZ());
+            g_pMain.Send_NewRegions(result, insert_x, insert_z, GetMap(), GetRegionX(), GetRegionZ());
         }
         #endregion
     }

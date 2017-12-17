@@ -12,3 +12,4 @@ C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\bin\R
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Release\Database.csproj.CoreCompileInputs.cache
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Release\Database.dll
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Release\Database.pdb
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\Database\obj\Release\Database.csprojResolveAssemblyReference.cache

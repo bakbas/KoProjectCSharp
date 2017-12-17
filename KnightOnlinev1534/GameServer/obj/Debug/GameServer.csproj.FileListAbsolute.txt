@@ -16,3 +16,11 @@ C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Database.dll.config
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\EntityFramework.xml
 C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\box2d.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Microsoft.Xna.Framework.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Microsoft.Xna.Framework.Game.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Microsoft.Xna.Framework.Graphics.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\Microsoft.Xna.Framework.Xact.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\zlib.net.dll
+C:\Users\Fatih\Documents\GitHub\KoProjectCSharp\KnightOnlinev1534\GameServer\bin\Debug\DynamicLua.dll

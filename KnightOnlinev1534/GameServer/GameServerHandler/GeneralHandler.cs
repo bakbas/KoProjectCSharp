@@ -35,13 +35,13 @@ namespace GameServer
 
     public partial class User : IUserGeneralHandler
     {
-        private byte m_bResHpType;
-        private byte m_bNeedParty;
-        private AbnormalType m_nOldAbnormalType;
-        private byte m_bPartyLeader;
-        private int m_bAddWeaponDamage;
-        private int m_sACAmount;
-        private int m_bMaxWeightAmount;
+        public byte m_bResHpType;
+        public byte m_bNeedParty;
+        public AbnormalType m_nOldAbnormalType;
+        public byte m_bPartyLeader;
+        public int m_bAddWeaponDamage;
+        public int m_sACAmount;
+        public int m_bMaxWeightAmount;
 
         public void BlinkStart()
         {
@@ -56,7 +56,7 @@ namespace GameServer
 
         public void SetUserAbility(bool bSendPacket = true)
         {
-            var p_TableCoefficient = GameServerDLG._CLASS_COEFFICIENT.Where(i => i.sClass == m_sClass).FirstOrDefault();
+            var p_TableCoefficient = g_pMain._CLASS_COEFFICIENT.Where(i => i.sClass == m_sClass).FirstOrDefault();
             bool bHaveBow = false;
             short sItemDamage = 0;
 
@@ -66,7 +66,7 @@ namespace GameServer
             float hitcoefficient = 0.0f;
 
             var ItemDetail = m_ItemData[(int)INVENTORY.RIGHTHAND];
-            var Item = GameServerDLG.m_ItemTable.Where(i => i.Num == ItemDetail.nNum).FirstOrDefault();
+            var Item = g_pMain.m_ItemTable.Where(i => i.Num == ItemDetail.nNum).FirstOrDefault();
 
             if (Item != null)
             {
@@ -106,7 +106,7 @@ namespace GameServer
             }
 
             var pLeftData = m_ItemData[(int)INVENTORY.LEFTHAND];
-            var pLeftHand = GameServerDLG.m_ItemTable.Where(i => i.Num == pLeftData.nNum).FirstOrDefault();
+            var pLeftHand = g_pMain.m_ItemTable.Where(i => i.Num == pLeftData.nNum).FirstOrDefault();
 
             if (pLeftHand != null)
             {
@@ -206,7 +206,7 @@ namespace GameServer
 
         public void SetMaxMp(int iFlag = 0)
         {
-            var p_TableCoefficient = GameServerDLG._CLASS_COEFFICIENT.Where(i => i.sClass == m_sClass).FirstOrDefault();
+            var p_TableCoefficient = g_pMain._CLASS_COEFFICIENT.Where(i => i.sClass == m_sClass).FirstOrDefault();
 
             if (p_TableCoefficient == null)
                 return;
@@ -239,13 +239,97 @@ namespace GameServer
             }
         }
 
-        public void HpChange(ushort m_sHp)
+        public void HpChange(int amount, short pAttacker = -1)
+        {
+            Packet result = new Packet(WIZ.HP_CHANGE);
+            short oldHp = (short)m_sHp;
+            int originalAmount = amount;
+            int mirrorDamage = 0;
+
+            // Harita konrolü eklenecek
+            if(pAttacker != -1)
+            {
+                if(pAttacker >= NPC_BAND)
+                {
+
+                }
+            }
+
+            if (amount <= -14000)
+                amount = -14000;
+            else if (amount >= 14000)
+                amount = 14000;
+
+            // Hasar aldıysa
+            if(amount <0)
+            {
+                // gm hasar alamaz
+                if (isGM())
+                    return;
+
+                RemoveStealth();
+
+                // Mirror amount yazılacak altyapı hazır değil yazmadım
+                // Karsışdaki mana absorb  işlemleri
+                // Pasif master skilleri
+            }
+            else if (m_bIsUndead)
+            {
+                amount = -amount;
+                originalAmount = amount;
+            }
+
+            if (amount < 0 && -amount >= m_sHp)
+                m_sHp = 0;
+            else if (amount >= 0 && m_sHp + amount > m_iMaxHp)
+                m_sHp = (ushort)m_iMaxHp;
+            else
+                m_sHp += (ushort)amount;
+
+            result = result + m_iMaxHp + m_sHp + pAttacker;
+
+            /*
+             * Master göt kızarması
+             if (GetHealth() > 0
+	    	            && isMastered()
+		                    && !isMage() && GetZoneID() != ZONE_CHAOS_DUNGEON)
+	                    {
+		                    const uint16 hp30Percent = (30 * GetMaxHealth()) / 100;
+		                    if ((oldHP >= hp30Percent && m_sHp < hp30Percent)
+			                    || (m_sHp > hp30Percent))
+		                    {
+			                    SetUserAbility();
+
+			                    if (m_sHp < hp30Percent)
+				                    ShowEffect(106800); // skill ID for "Boldness", shown when a player takes damage.
+		                    }
+	                    }
+                 */
+            Send(result);
+
+            //if (isInParty() && GetZoneID() != ZONE_CHAOS_DUNGEON)
+            //    SendPartyHPUpdate();
+            // Ataker varsa kaç hasar vurduğunu gönder
+            // if (pAttacker != nullptr
+            //        && pAttacker->isPlayer())
+            //             TO_USER(pAttacker)->SendTargetHP(0, GetID(), originalAmount);
+
+            if (m_sHp == 0)
+                OnDeath(pAttacker);
+        }
+
+        public void OnDeath(short tid)
+        {
+
+        }
+
+        public void RemoveStealth()
         {
         }
 
-        private void SetMaxHp()
+        public void SetMaxHp()
         {
-            var p_TableCoefficient = GameServerDLG._CLASS_COEFFICIENT.Where(i => i.sClass == m_sClass).FirstOrDefault();
+            var p_TableCoefficient = g_pMain._CLASS_COEFFICIENT.Where(i => i.sClass == m_sClass).FirstOrDefault();
 
             if (p_TableCoefficient == null)
                 return;
@@ -274,9 +358,54 @@ namespace GameServer
             }
         }
 
-        public void MSpChange(ushort m_sMp)
+        public void MSpChange( int amount)
         {
+            Packet result = new Packet(WIZ.MSP_CHANGE);
+            short oldMP = (short)m_sMp;
 
+            if (isGM() && amount < 0)
+                return;
+
+            // TODO: Make this behave unsigned.
+            m_sMp += (ushort)amount;
+            if (m_sMp < 0)
+                m_sMp = 0;
+            else if (m_sMp > m_iMaxMp)
+                m_sMp = (ushort)m_iMaxMp;
+
+            // mage göt kızarma
+            //if (isMasteredMage())
+            //{
+            //    const uint16 mp30Percent = (30 * GetMaxMana()) / 100;
+            //    if (oldMP >= mp30Percent
+            //        && GetMana() < mp30Percent)
+            //        ShowEffect(106800); // skill ID for "Boldness", shown when a player loses mana.
+            //}
+
+            result = result + m_iMaxMp + m_sMp;
+            Send(result);
+            // mp update party
+
+           //if (isInParty() && GetZoneID() != ZONE_CHAOS_DUNGEON)
+           //    SendPartyHPUpdate(); // handles MP too
+        }
+
+        public void ShowEffect(int nSkillID)
+        {
+            Packet result = new Packet(WIZ.EFFECT);
+            result = result + GetSocketID() + nSkillID;
+            SendToRegion(result);
+        }
+
+        public void ShowNpcEffect(int nEffectID, bool bSendToRegion = false)
+        {
+            Packet result = new Packet(WIZ.OBJECT_EVENT);
+         //   result = result + 
+            //result << uint8(3) << m_sEventNid << nEffectID;
+         // if (bSendToRegion)
+         //     SendToRegion(&result);
+         // else
+         //     Send(&result);
         }
 
         public void SendItemMove(byte subcommand)
@@ -345,6 +474,16 @@ namespace GameServer
         public short m_iMaxHp;
         public short m_sMaxHPAmount, m_sMaxMPAmount;
         public short m_iMaxMp;
+        public bool m_bIsUndead;
+        public short m_sBowR, m_sSpearR, m_sDaggerR, m_sSwordR, m_sAxeR, m_sMaceR;
+        public byte[] m_byAPClassBonusAmount= new byte[4]; // one for each of the 4 class types
+        public byte[] m_byAcClassBonusAmount= new byte[4]; // one for each of the 4 class types
+        public short m_bItemNoahGainAmount;
+        public short m_bItemNPBonus;
+        public short m_bItemExpGainAmount;
+        public Dictionary<byte, Dictionary<byte, short>> m_equippedItemBonuses = new Dictionary<byte, Dictionary<byte, short>>();
+        public int m_sAddArmourAc;
+        public short m_bPctArmourAc;
 
         public ClassType GetBaseClassType() => classTypes[GetClassType()];
         byte GetClassType() => (byte)(m_sClass % 100);
@@ -354,7 +493,7 @@ namespace GameServer
         public bool isMage() { return JobGroupCheck((short)ClassType.ClassMage); }
         public bool isPriest() { return JobGroupCheck((short)ClassType.ClassPriest); }
 
-        private bool JobGroupCheck(short cType)
+        public bool JobGroupCheck(short cType)
         {
             if (cType > 100)
                 return m_sClass == cType;
@@ -389,8 +528,133 @@ namespace GameServer
 
         public int GetStat(StatType type) => m_bStats[(int)type];
 
-        private void SetSlotItemValue()
+        public void SetSlotItemValue()
         {
+            int item_hit = 0, item_ac = 0;
+            m_sItemMaxHp = m_sItemMaxMp = 0;
+            m_sItemAc = 0;
+            m_sItemWeight = m_sMaxWeightBonus = 0;
+            m_sItemHitrate = m_sItemEvasionrate = 100;
+
+            memset(ref m_sStatItemBonuses, 0, m_sStatItemBonuses.Length);
+            m_sFireR = m_sColdR = m_sLightningR = m_sMagicR = m_sDiseaseR = m_sPoisonR = 0;
+            m_sDaggerR = m_sSwordR = m_sAxeR = m_sMaceR = m_sSpearR = m_sBowR = 0;
+
+            m_byAPBonusAmount = 0;
+            memset(ref m_byAPClassBonusAmount, 0, m_byAPClassBonusAmount.Length);
+            memset(ref m_byAcClassBonusAmount, 0, m_byAcClassBonusAmount.Length);
+
+            m_bItemExpGainAmount = m_bItemNPBonus = m_bItemNoahGainAmount = 0;
+
+            m_equippedItemBonuses.Clear();
+            Dictionary<Int16, Int32> setItems = new Dictionary<short, int>();
+
+            for (int i = 0; i < INVENTORY_TOTAL; i++)
+            {
+                ItemSlot pItem = null;
+                var pTable = GetItemPrototype(i, ref pItem);
+
+                if (pTable == null)
+                    continue;
+
+                if (i == INVENTORY_COSP + COSP_BAG1
+                 || i == INVENTORY_COSP + COSP_BAG2)
+                {
+                    m_sMaxWeightBonus += (ushort)pTable.Duration;
+                }
+                else
+                {
+                    // Non-stackable items should have a count of 1. If not, something's broken.
+                    m_sItemWeight += pTable.Weight* pItem.sCount;
+                }
+
+                item_ac = pTable.Ac;
+                if (pItem.sDuration == 0)
+                    item_ac /= 10;
+
+                m_sItemMaxHp += pTable.MaxHpB;
+                m_sItemMaxMp += pTable.MaxMpB;
+                m_sItemAc += (short)item_ac;
+                m_sStatItemBonuses[(int)StatType.STAT_STR] += (sbyte)pTable.StrB;
+                m_sStatItemBonuses[(int)StatType.STAT_STA] += (sbyte)pTable.StaB;
+                m_sStatItemBonuses[(int)StatType.STAT_DEX] += (sbyte)pTable.DexB;
+                m_sStatItemBonuses[(int)StatType.STAT_INT] += (sbyte)pTable.IntelB;
+                m_sStatItemBonuses[(int)StatType.STAT_CHA] += (sbyte)pTable.ChaB;
+                m_sItemHitrate += pTable.Hitrate;
+                m_sItemEvasionrate += pTable.Evasionrate;
+
+                m_sFireR += pTable.FireR;
+                m_sColdR += pTable.ColdR;
+                m_sLightningR += pTable.LightningR;
+                m_sMagicR += pTable.MagicR;
+                m_sDiseaseR += pTable.CurseR;
+                m_sPoisonR += pTable.PoisonR;
+
+                m_sDaggerR += pTable.DaggerAc;
+                m_sSwordR +=  pTable.SwordAc;
+                m_sAxeR +=    pTable.AxeAc;
+                m_sMaceR +=   pTable.MaceAc;
+                m_sSpearR +=  pTable.SpearAc;
+                m_sBowR +=    pTable.BowAc;
+
+                Dictionary<byte, short> ItemBonusMap = new Dictionary<byte, short>();
+                if (pTable.FireDamage > 0)
+                    ItemBonusMap.Add(ITEM_TYPE_FIRE, pTable.FireDamage);
+
+                if (pTable.IceDamage> 0)
+                    ItemBonusMap.Add(ITEM_TYPE_COLD, pTable.IceDamage);
+
+                if (pTable.LightningDamage > 0)
+                    ItemBonusMap.Add(ITEM_TYPE_LIGHTNING, pTable.LightningDamage);
+
+                if (pTable.PoisonDamage > 0)
+                    ItemBonusMap.Add(ITEM_TYPE_POISON, pTable.PoisonDamage);
+
+                if (pTable.HPDrain > 0)
+                    ItemBonusMap.Add(ITEM_TYPE_HP_DRAIN, pTable.HPDrain);
+
+                if (pTable.MPDamage > 0)
+                    ItemBonusMap.Add(ITEM_TYPE_MP_DAMAGE, pTable.MPDamage);
+
+                if (pTable.MPDrain > 0)
+                    ItemBonusMap.Add(ITEM_TYPE_MP_DRAIN, pTable.MPDrain);
+
+                if (pTable.MirrorDamage > 0)
+                    ItemBonusMap.Add(ITEM_TYPE_MIRROR_DAMAGE, pTable.MirrorDamage);
+
+                if (ItemBonusMap.Count > 0)
+                    if (m_equippedItemBonuses.ContainsKey((byte)i))
+                        continue;
+                    else
+                        m_equippedItemBonuses.Add((byte)i, ItemBonusMap);
+
+                if(pTable.Kind == ITEM_KIND_COSPRE)
+                {
+                    // Set item bonus
+                }
+
+                if (pTable.Race < 100)
+                    continue;
+
+                // set item işlemleri
+                //var itr = setItems.find(pTable.Race);
+            }
+
+            if (m_sAddArmourAc > 0)
+                m_sItemAc += (short)m_sAddArmourAc;
+            else
+                m_sItemAc = (short)(m_sItemAc * m_bPctArmourAc / 100);
+        }
+
+        public Database.ServerManager.ITEM GetItemPrototype(int i, ref ItemSlot pItem)
+        {
+            pItem = m_ItemData[i];
+
+            if (pItem == null)
+                return null;
+
+            int itemNum = (int)pItem.nNum;
+            return g_pMain.m_ItemTable.Where(ii => ii.Num == itemNum).FirstOrDefault();
         }
 
         public void StateChangeServerDirect(byte bType, AbnormalType nBuff)
@@ -440,26 +704,10 @@ namespace GameServer
             SendToRegion(result);
         }
 
-        // Şu anlık sadece kendine gönderiyor
-        private void SendToRegion(Packet result)
+        public void SendToRegion(Packet result)
         {
-            lock(GetRegion().m_RegionUserArray)
-            {
-                Log.WriteLine("=================================================");
-                foreach (var itr in GetRegion().m_RegionUserArray.Values)
-                {
-                    User pUSer = GameServerDLG.m_UserList[itr];
-
-                    if (pUSer == null)
-                        continue;
-
-                    Log.WriteLine("Regin Sending : " + itr + " - "+ pUSer.strUserID);
-                    pUSer.Send(result);
-                }
-                Log.WriteLine("=================================================");
-            }
+            g_pMain.SendToRegion(result, GetRegion());
         }
-        
 
         public bool isGM() => m_DatabaseInfo.Authority == 0;
 

@@ -25,7 +25,7 @@ namespace GameServer
         /// <summary>
         /// In out işlemleri
         /// </summary>
-        void NpcInOut(ref Packet result, InOutType bType);
+        void NpcInOut(InOutType bType, float fX, float fZ, float fY);
         /// <summary>
         /// In out işlemlerini çağıracak fonksiyon
         /// </summary>

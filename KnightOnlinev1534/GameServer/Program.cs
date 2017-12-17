@@ -12,13 +12,13 @@ namespace GameServer
         static void Main(string[] args)
         {
             Console.Title = "KNIGHT ONLINE _V1534";
-            if (!GameServerDLG.InitializeLoginServer())
+            if (!g_pMain.InitializeLoginServer())
             {
                 Console.WriteLine("Cannont intialize Login Server progress...... \nPress any key.");
                 return;
             }
 
-            skt = new Network.KOSocket((short)(15001), "GameServer", GameServerDLG.PacketHandler);
+            skt = new Network.KOSocket((short)(15001), "GameServer", g_pMain.PacketHandler);
             skt.StartAccept();
         }
     }

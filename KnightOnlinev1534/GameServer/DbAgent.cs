@@ -112,6 +112,32 @@ namespace GameServer
             return true;
         }
 
+        public static bool LoadNpcs(bool v)
+        {
+            NpcProcess.LoadingNpc newLoader = new NpcProcess.LoadingNpc();
+
+            newLoader.GenerateNpc(
+                m_GameDb.K_NPC.ToList(), m_GameDb.K_MONSTER.ToList(), m_GameDb.K_NPCPOS.ToList()
+                );
+            return true;
+        }
+
+        internal static bool LoadHelperTable(ref List<QUEST_HELPER> m_HelperList, bool v)
+        {
+            if (!v && m_GameDb.QUEST_HELPER.Count() <= 0)
+                return false;
+            m_HelperList = m_GameDb.QUEST_HELPER.ToList();
+            return true;
+        }
+
+        internal static bool LoadQuestMonsterTable(ref List<QUEST_MONSTER> m_QuestMonsterList, bool v)
+        {
+            if (!v && m_GameDb.QUEST_MONSTER.Count() <= 0)
+                return false;
+            m_QuestMonsterList = m_GameDb.QUEST_MONSTER.ToList();
+            return true;
+        }
+
         public static byte CreateNewChar(string strAccountID, string userID, byte nHair, short sClass, byte bCharIndex, byte bRace, byte bFace, byte str, byte sta, byte dex, byte intel, byte cha)
         {
             var AccountChar = m_GameDb.ACCOUNT_CHAR.Where(i => i.strAccountID == strAccountID).FirstOrDefault();

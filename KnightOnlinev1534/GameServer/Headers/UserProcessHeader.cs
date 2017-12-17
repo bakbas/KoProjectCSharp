@@ -57,7 +57,7 @@ namespace GameServer
 
         public Map GetMap()
         {
-            return GameServerDLG.Maps.Where(i => i.m_nZoneNumber == m_bZone).FirstOrDefault();
+            return g_pMain.Maps.Where(i => i.m_nZoneNumber == m_bZone).FirstOrDefault();
              // Game server içinde mapler olacak oradan çektirilecek
         }
 
@@ -69,12 +69,12 @@ namespace GameServer
         public void Update()
         {
             // Blink 
-            if(DateTime.Now >= m_dtBlinkTimeExpire)
-            {
-                m_bRegeneType = RegeneType.REGENE_NORMAL;                
-                StateChangeServerDirect(3, AbnormalType.ABNORMAL_NORMAL);                                
-                UpdateVisibility(InvisibilityType.INVIS_NONE);
-            }
+           // if(DateTime.Now >= m_dtBlinkTimeExpire)
+           // {
+           //     m_bRegeneType = RegeneType.REGENE_NORMAL;                
+           //     StateChangeServerDirect(3, AbnormalType.ABNORMAL_NORMAL);                                
+           //     UpdateVisibility(InvisibilityType.INVIS_NONE);
+           // }
         }
     }   
 

@@ -40,13 +40,13 @@ public partial class Map
 
     public _WARP_INFO GetWarp(int warpID) => null; // Warp bilgileri db den çekilecek gameserver içinden yanıt verilecek
 
-    public int GetXRegionMax() => ((2000 / GameServerDLG.VIEW_DISTANCE) + 1);
+    public int GetXRegionMax() => ((2000 / g_pMain.VIEW_DISTANCE) + 1);
 
     public short GetZoneFlags() => m_zoneFlags;
 
     public ZoneAbilityType GetZoneType() => m_zoneType;
 
-    public int GetZRegionMax() => ((2000 / GameServerDLG.VIEW_DISTANCE) + 1);
+    public int GetZRegionMax() => ((2000 / g_pMain.VIEW_DISTANCE) + 1);
     public bool Initialize(ZONE_INFO pZone)
     {
         m_nServerNo = 1;
@@ -220,4 +220,5 @@ public partial class Map
         }
     }
 
+    internal int GetMapSize() => 2048;
 }
